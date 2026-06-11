@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>IICT Student Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #f0f2f5;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a3c5e 0%, #2c5282 100%);
+            color: white;
+            padding: 20px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 500;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            color: white;
+        }
+
+        .form-panel {
+            background: white;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 12px;
+            color: #2d3748;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2c5282;
+            box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+        }
+
+        .form-group input.invalid {
+            border-color: #c53030;
+            background: #fff5f5;
+        }
+
+        .error-message {
+            font-size: 11px;
+            color: #c53030;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: #2c5282; color: white; }
+        .btn-primary:hover { background: #1a3c5e; }
+        .btn-warning { background: #dd6b20; color: white; }
+        .btn-warning:hover { background: #c05621; }
+        .btn-danger { background: #c53030; color: white; }
+        .btn-danger:hover { background: #9b2c2c; }
+        .btn-neutral { background: #718096; color: white; }
+        .btn-neutral:hover { background: #4a5568; }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-section {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2c5282;
+        }
+
+        .student-list {
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-left: 4px solid #2c5282;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .student-card:hover {
+            background: #f7fafc;
+            transform: translateX(2px);
+        }
+
+        .student-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .student-id {
+            font-size: 11px;
+            color: #2c5282;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .student-details {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .status-enrolled {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status-pending {
+            background: #feebc8;
+            color: #7b341e;
+            border: 1px solid #fbd38d;
+        }
+
+        .status-dropped {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .profile-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .profile-line {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+
+        .profile-line:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: #2d3748;
+            width: 140px;
+            display: inline-block;
+        }
+
+        .profile-value {
+            color: #1a202c;
+        }
+
+        .stats-container {
+            padding: 16px;
+        }
+
+        .stats-grid {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 100px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c5282;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .login-container {
+            padding: 30px 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-title h2 {
+            color: #2c5282;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .login-title p {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .role-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-option.selected {
+            border-color: #2c5282;
+            background: #ebf4ff;
+        }
+
+        .role-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .role-desc {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .credentials-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .credentials-title {
+            font-weight: 600;
+            font-size: 12px;
+            color: #2d3748;
+            margin-bottom: 12px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .credential-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .credential-row:last-child {
+            border-bottom: none;
+        }
+
+        .credential-role {
+            font-weight: 600;
+            color: #2c5282;
+        }
+
+        .credential-details {
+            color: #4a5568;
+        }
+
+        .credential-details span {
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 2000;
+            animation: slideUp 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .notification.success { background: #276749; }
+        .notification.error { background: #c53030; }
+        .notification.info { background: #2c5282; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .tab-nav {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn.active {
+            color: #2c5282;
+            border-bottom: 3px solid #2c5282;
+            background: #f7fafc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .scroll-area {
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { gap: 8px; }
+            .stat-card { padding: 12px; min-width: 70px; }
+            .stat-number { font-size: 20px; }
+            .profile-label { width: 120px; }
+            .profile-line { font-size: 13px; }
+            .credential-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Panel -->
+        <div id="loginPanel">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-title">
+                        <h2>IICT Student Information System</h2>
+                        <p>Institute of Information and Communications Technology</p>
+                    </div>
+                    
+                    <div class="role-selector">
+                        <div class="role-option" id="adminRole" onclick="selectRole('admin')">
+                            <div class="role-name">Administrator</div>
+                            <div class="role-desc">Full Access</div>
+                        </div>
+                        <div class="role-option" id="studentRole" onclick="selectRole('student')">
+                            <div class="role-name">Student</div>
+                            <div class="role-desc">View Only</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="login()">Sign In</button>
+
+                    <!-- Login Credentials Guide -->
+                    <div class="credentials-box">
+                        <div class="credentials-title">Login Credentials</div>
+                        <div class="credential-row">
+                            <span class="credential-role">Administrator:</span>
+                            <span class="credential-details"><span>admin</span> / <span>admin123</span></span>
+                        </div>
+                        <div class="credential-row">
+                            <span class="credential-role">Student:</span>
+                            <span class="credential-details"><span>2024-0001</span> / <span>student123</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" style="display:none;">
+            <div class="header">
+                <h1>Administrator Panel</h1>
+                <p>IICT Student Information System</p>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
+
+            <div class="tab-nav">
+                <button class="tab-btn" onclick="showAdminTab('form')">Manage</button>
+                <button class="tab-btn" onclick="showAdminTab('list')">Students</button>
+                <button class="tab-btn" onclick="showAdminTab('stats')">Statistics</button>
+            </div>
+
+            <!-- Admin Manage Tab -->
+            <div id="adminFormTab" class="tab-content">
+                <div class="form-panel">
+                    <div class="form-group">
+                        <label>Student ID Number</label>
+                        <input type="text" id="adminStudentId" placeholder="e.g., 2024-0001" onkeyup="validateAdminId()" onblur="validateAdminId()">
+                        <div class="error-message" id="adminIdError">Numbers and dash only. Letters are not allowed.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="adminStudentName" placeholder="Last Name, First Name" onkeyup="validateAdminName()" onblur="validateAdminName()">
+                        <div class="error-message" id="adminNameError">Letters, spaces, comma, and dot only. Numbers are not allowed.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Course / Program</label>
+                        <input type="text" id="adminCourse" placeholder="e.g., BS Information Technology">
+                    </div>
+                    <div class="form-group">
+                        <label>Year Level</label>
+                        <input type="text" id="adminYear" placeholder="e.g., 3rd Year">
+                    </div>
+                    <div class="form-group">
+                        <label>Section</label>
+                        <input type="text" id="adminSection" placeholder="e.g., IT-3A">
+                    </div>
+                    <div class="form-group">
+                        <label>Enrollment Status</label>
+                        <select id="adminStatus">
+                            <option value="Enrolled">Enrolled</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Dropped">Dropped</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="adminSaveStudent()">Save</button>
+                        <button class="btn btn-warning" onclick="adminUpdateStudent()">Update</button>
+                        <button class="btn btn-danger" onclick="adminDeleteStudent()">Delete</button>
+                        <button class="btn btn-neutral" onclick="adminClearFields()">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin List Tab -->
+            <div id="adminListTab" class="tab-content">
+                <div class="search-section">
+                    <input type="text" id="adminSearch" class="search-input" placeholder="Search by ID or name..." onkeyup="adminSearchStudents()">
+                </div>
+                <div class="scroll-area">
+                    <div id="adminStudentList" class="student-list"></div>
+                </div>
+            </div>
+
+            <!-- Admin Stats Tab -->
+            <div id="adminStatsTab" class="tab-content">
+                <div class="stats-container">
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number" id="adminTotalStudents">0</div><div class="stat-label">Total Students</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminEnrolledCount">0</div><div class="stat-label">Enrolled</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminPendingCount">0</div><div class="stat-label">Pending</div></div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number" id="adminDroppedCount">0</div><div class="stat-label">Dropped</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminFirstYear">0</div><div class="stat-label">1st Year</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminSecondYear">0</div><div class="stat-label">2nd Year</div></div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number" id="adminThirdYear">0</div><div class="stat-label">3rd Year</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminFourthYear">0</div><div class="stat-label">4th Year</div></div>
+                        <div class="stat-card"><div class="stat-number" id="adminOtherYear">0</div><div class="stat-label">Other Year</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Panel -->
+        <div id="studentPanel" style="display:none;">
+            <div class="header">
+                <h1>Student Panel</h1>
+                <p>IICT Student Information System</p>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
+
+            <div class="tab-nav">
+                <button class="tab-btn" onclick="showStudentTab('profile')">My Profile</button>
+            </div>
+
+            <div id="studentProfileTab" class="tab-content">
+                <div id="studentProfileCard" class="profile-card"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let students = [];
+        let currentStudent = null;
+        let currentUser = null;
+        let selectedRole = 'admin';
+        let adminSearchTerm = '';
+
+        // Credentials
+        const ADMIN_USERNAME = "admin";
+        const ADMIN_PASSWORD = "admin123";
+        const STUDENT_PASSWORD = "student123";
+
+        function showNotification(message, type) {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notif = document.createElement('div');
+            notif.className = 'notification ' + type;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                if (notif && notif.remove) notif.remove();
+            }, 2500);
+        }
+
+        function validateAdminId() {
+            const input = document.getElementById('adminStudentId');
+            const error = document.getElementById('adminIdError');
+            const pattern = /^[0-9\-\s]*$/;
+            
+            if (input.value.length > 0 && !pattern.test(input.value)) {
+                input.classList.add('invalid');
+                error.classList.add('show');
+                return false;
+            } else {
+                input.classList.remove('invalid');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+
+        function validateAdminName() {
+            const input = document.getElementById('adminStudentName');
+            const error = document.getElementById('adminNameError');
+            const pattern = /^[A-Za-z\s\,\.\'\-\ñ\Ñ]*$/;
+            
+            if (input.value.length > 0 && !pattern.test(input.value)) {
+                input.classList.add('invalid');
+                error.classList.add('show');
+                return false;
+            } else {
+                input.classList.remove('invalid');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+
+        document.getElementById('adminStudentId')?.addEventListener('input', function(e) {
+            const pattern = /^[0-9\-\s]*$/;
+            if (!pattern.test(e.target.value)) {
+                e.target.value = e.target.value.replace(/[^0-9\-\s]/g, '');
+            }
+            validateAdminId();
+        });
+        
+        document.getElementById('adminStudentName')?.addEventListener('input', function(e) {
+            const pattern = /^[A-Za-z\s\,\.\'\-\ñ\Ñ]*$/;
+            if (!pattern.test(e.target.value)) {
+                e.target.value = e.target.value.replace(/[^A-Za-z\s\,\.\'\-\ñ\Ñ]/g, '');
+            }
+            validateAdminName();
+        });
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.getElementById('adminRole').classList.remove('selected');
+            document.getElementById('studentRole').classList.remove('selected');
+            if (role === 'admin') {
+                document.getElementById('adminRole').classList.add('selected');
+                document.getElementById('loginUsername').placeholder = "Enter admin username";
+            } else {
+                document.getElementById('studentRole').classList.add('selected');
+                document.getElementById('loginUsername').placeholder = "Enter student ID";
+            }
+        }
+
+        function loadData() {
+            try {
+                const stored = localStorage.getItem('iict_students_final');
+                if (stored && stored !== 'undefined') {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        students = parsed;
+                    } else {
+                        students = [];
+                    }
+                } else {
+                    students = [];
+                }
+            } catch(e) {
+                students = [];
+            }
+            saveToLocal();
+            adminDisplayStudents();
+            adminUpdateStatistics();
+        }
+
+        function saveToLocal() {
+            localStorage.setItem('iict_students_final', JSON.stringify(students));
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (selectedRole === 'admin') {
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    currentUser = { role: 'admin' };
+                    showAdminPanel();
+                    showNotification('Admin login successful', 'success');
+                } else {
+                    showNotification('Invalid admin credentials', 'error');
+                }
+            } else {
+                const student = students.find(s => s.id === username);
+                if (student && password === STUDENT_PASSWORD) {
+                    currentStudent = student;
+                    currentUser = { role: 'student', id: username, name: student.name };
+                    showStudentPanel();
+                    showNotification('Welcome ' + student.name, 'success');
+                } else {
+                    showNotification('Invalid student ID or password', 'error');
+                }
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('studentPanel').style.display = 'none';
+            adminDisplayStudents();
+            adminUpdateStatistics();
+            showAdminTab('list');
+        }
+
+        function showStudentPanel() {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('studentPanel').style.display = 'block';
+            displayStudentProfile();
+            showStudentTab('profile');
+        }
+
+        function displayStudentProfile() {
+            const container = document.getElementById('studentProfileCard');
+            if (!container) return;
+            
+            if (!currentStudent) {
+                container.innerHTML = '<div class="empty-state">No profile data found</div>';
+                return;
+            }
+
+            let statusClass = '';
+            if (currentStudent.status === 'Enrolled') statusClass = 'status-enrolled';
+            else if (currentStudent.status === 'Pending') statusClass = 'status-pending';
+            else statusClass = 'status-dropped';
+
+            const html = `
+                <div class="profile-title">Student Information</div>
+                <div class="profile-line">
+                    <span class="profile-label">Student ID:</span>
+                    <span class="profile-value">${escapeHtml(currentStudent.id)}</span>
+                </div>
+                <div class="profile-line">
+                    <span class="profile-label">Full Name:</span>
+                    <span class="profile-value">${escapeHtml(currentStudent.name)}</span>
+                </div>
+                <div class="profile-line">
+                    <span class="profile-label">Course:</span>
+                    <span class="profile-value">${escapeHtml(currentStudent.course)}</span>
+                </div>
+                <div class="profile-line">
+                    <span class="profile-label">Year Level:</span>
+                    <span class="profile-value">${escapeHtml(currentStudent.year)}</span>
+                </div>
+                <div class="profile-line">
+                    <span class="profile-label">Section:</span>
+                    <span class="profile-value">${escapeHtml(currentStudent.section)}</span>
+                </div>
+                <div class="profile-line">
+                    <span class="profile-label">Enrollment Status:</span>
+                    <span class="profile-value"><span class="status-badge ${statusClass}">${escapeHtml(currentStudent.status)}</span></span>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function logout() {
+            currentStudent = null;
+            currentUser = null;
+            selectedRole = 'admin';
+            document.getElementById('adminRole').classList.add('selected');
+            document.getElementById('studentRole').classList.remove('selected');
+            document.getElementById('loginPanel').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('studentPanel').style.display = 'none';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            showNotification('Logged out successfully', 'info');
+        }
+
+        function showAdminTab(tabName) {
+            document.getElementById('adminFormTab').classList.remove('active');
+            document.getElementById('adminListTab').classList.remove('active');
+            document.getElementById('adminStatsTab').classList.remove('active');
+            document.querySelectorAll('#adminPanel .tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (tabName === 'form') {
+                document.getElementById('adminFormTab').classList.add('active');
+                document.querySelectorAll('#adminPanel .tab-btn')[0].classList.add('active');
+            } else if (tabName === 'list') {
+                document.getElementById('adminListTab').classList.add('active');
+                document.querySelectorAll('#adminPanel .tab-btn')[1].classList.add('active');
+                adminDisplayStudents();
+            } else if (tabName === 'stats') {
+                document.getElementById('adminStatsTab').classList.add('active');
+                document.querySelectorAll('#adminPanel .tab-btn')[2].classList.add('active');
+                adminUpdateStatistics();
+            }
+        }
+
+        function showStudentTab(tabName) {
+            document.getElementById('studentProfileTab').classList.remove('active');
+            document.querySelectorAll('#studentPanel .tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (tabName === 'profile') {
+                document.getElementById('studentProfileTab').classList.add('active');
+                document.querySelectorAll('#studentPanel .tab-btn')[0].classList.add('active');
+                displayStudentProfile();
+            }
+        }
+
+        function adminIsDuplicate(id, excludeId) {
+            return students.some(s => s.id === id && s.id !== excludeId);
+        }
+
+        function adminValidateForm(isUpdate, currentId) {
+            const id = document.getElementById('adminStudentId').value.trim();
+            const name = document.getElementById('adminStudentName').value.trim();
+            const course = document.getElementById('adminCourse').value.trim();
+            const year = document.getElementById('adminYear').value.trim();
+            const section = document.getElementById('adminSection').value.trim();
+
+            if (!id) { showNotification('Student ID required', 'error'); return false; }
+            if (!name) { showNotification('Student name required', 'error'); return false; }
+            if (!course) { showNotification('Course required', 'error'); return false; }
+            if (!year) { showNotification('Year level required', 'error'); return false; }
+            if (!section) { showNotification('Section required', 'error'); return false; }
+
+            const idPattern = /^[0-9\-\s]*$/;
+            if (!idPattern.test(id)) {
+                showNotification('Student ID must contain only numbers and dash', 'error');
+                return false;
+            }
+
+            const namePattern = /^[A-Za-z\s\,\.\'\-\ñ\Ñ]*$/;
+            if (!namePattern.test(name)) {
+                showNotification('Student name must contain only letters, spaces, comma, and dot', 'error');
+                return false;
+            }
+
+            if (adminIsDuplicate(id, isUpdate ? currentId : null)) {
+                showNotification('Student ID already exists', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Enrolled') return 'status-enrolled';
+            if (status === 'Pending') return 'status-pending';
+            return 'status-dropped';
+        }
+
+        function adminSaveStudent() {
+            const id = document.getElementById('adminStudentId').value.trim();
+            const name = document.getElementById('adminStudentName').value.trim();
+            const course = document.getElementById('adminCourse').value.trim();
+            const year = document.getElementById('adminYear').value.trim();
+            const section = document.getElementById('adminSection').value.trim();
+            const status = document.getElementById('adminStatus').value;
+
+            if (!adminValidateForm(false, null)) return;
+
+            students.push({ id, name, course, year, section, status });
+            saveToLocal();
+            adminClearFields();
+            adminDisplayStudents();
+            adminUpdateStatistics();
+            showNotification('Student saved successfully', 'success');
+        }
+
+        function adminUpdateStudent() {
+            const id = document.getElementById('adminStudentId').value.trim();
+            if (!id) { showNotification('Enter student ID to update', 'error'); return; }
+
+            const index = students.findIndex(s => s.id === id);
+            if (index === -1) { showNotification('Student not found', 'error'); return; }
+
+            const name = document.getElementById('adminStudentName').value.trim();
+            const course = document.getElementById('adminCourse').value.trim();
+            const year = document.getElementById('adminYear').value.trim();
+            const section = document.getElementById('adminSection').value.trim();
+            const status = document.getElementById('adminStatus').value;
+
+            if (!name) { showNotification('Name required', 'error'); return; }
+            if (!course) { showNotification('Course required', 'error'); return; }
+            if (!year) { showNotification('Year level required', 'error'); return; }
+            if (!section) { showNotification('Section required', 'error'); return; }
+
+            if (!adminValidateForm(true, id)) return;
+
+            students[index] = { id, name, course, year, section, status };
+            saveToLocal();
+            adminClearFields();
+            adminDisplayStudents();
+            adminUpdateStatistics();
+            showNotification('Student updated successfully', 'success');
+        }
+
+        function adminDeleteStudent() {
+            const id = document.getElementById('adminStudentId').value.trim();
+            if (!id) { showNotification('Enter student ID to delete', 'error'); return; }
+
+            const student = students.find(s => s.id === id);
+            if (!student) { showNotification('Student not found', 'error'); return; }
+
+            if (confirm('Delete ' + student.name + '?')) {
+                students = students.filter(s => s.id !== id);
+                saveToLocal();
+                adminClearFields();
+                adminDisplayStudents();
+                adminUpdateStatistics();
+                showNotification('Student deleted successfully', 'success');
+            }
+        }
+
+        function adminClearFields() {
+            document.getElementById('adminStudentId').value = '';
+            document.getElementById('adminStudentName').value = '';
+            document.getElementById('adminCourse').value = '';
+            document.getElementById('adminYear').value = '';
+            document.getElementById('adminSection').value = '';
+            document.getElementById('adminStatus').value = 'Enrolled';
+            document.getElementById('adminStudentId').classList.remove('invalid');
+            document.getElementById('adminStudentName').classList.remove('invalid');
+            showNotification('Form cleared', 'info');
+        }
+
+        function adminSearchStudents() {
+            const input = document.getElementById('adminSearch');
+            adminSearchTerm = input.value.toLowerCase().trim();
+            adminDisplayStudents();
+        }
+
+        function adminDisplayStudents() {
+            const container = document.getElementById('adminStudentList');
+            let filtered = students;
+            
+            if (adminSearchTerm) {
+                filtered = students.filter(s => 
+                    s.id.toLowerCase().includes(adminSearchTerm) || 
+                    s.name.toLowerCase().includes(adminSearchTerm)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">No student records found. Click Manage to add a student.</div>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(s => {
+                let statusClass = getStatusClass(s.status);
+                html += `<div class="student-card" onclick="adminSelectStudent('${s.id}')">
+                            <div class="student-id">ID: ${escapeHtml(s.id)}</div>
+                            <h4>${escapeHtml(s.name)}</h4>
+                            <div class="student-details">
+                                ${escapeHtml(s.course)} | ${escapeHtml(s.year)} | ${escapeHtml(s.section)}
+                            </div>
+                            <span class="status-badge ${statusClass}">${escapeHtml(s.status)}</span>
+                        </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function adminSelectStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                document.getElementById('adminStudentId').value = student.id;
+                document.getElementById('adminStudentName').value = student.name;
+                document.getElementById('adminCourse').value = student.course;
+                document.getElementById('adminYear').value = student.year;
+                document.getElementById('adminSection').value = student.section;
+                document.getElementById('adminStatus').value = student.status;
+                showNotification('Selected: ' + student.name, 'info');
+                showAdminTab('form');
+            }
+        }
+
+        function adminUpdateStatistics() {
+            const total = students.length;
+            const enrolled = students.filter(s => s.status === 'Enrolled').length;
+            const pending = students.filter(s => s.status === 'Pending').length;
+            const dropped = students.filter(s => s.status === 'Dropped').length;
+            const first = students.filter(s => s.year === '1st Year').length;
+            const second = students.filter(s => s.year === '2nd Year').length;
+            const third = students.filter(s => s.year === '3rd Year').length;
+            const fourth = students.filter(s => s.year === '4th Year').length;
+            const other = students.filter(s => !['1st Year', '2nd Year', '3rd Year', '4th Year'].includes(s.year)).length;
+
+            document.getElementById('adminTotalStudents').textContent = total;
+            document.getElementById('adminEnrolledCount').textContent = enrolled;
+            document.getElementById('adminPendingCount').textContent = pending;
+            document.getElementById('adminDroppedCount').textContent = dropped;
+            document.getElementById('adminFirstYear').textContent = first;
+            document.getElementById('adminSecondYear').textContent = second;
+            document.getElementById('adminThirdYear').textContent = third;
+            document.getElementById('adminFourthYear').textContent = fourth;
+            document.getElementById('adminOtherYear').textContent = other;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
+        }
+
+        selectRole('admin');
+        loadData();
+    </script>
+</body>
+</html>
